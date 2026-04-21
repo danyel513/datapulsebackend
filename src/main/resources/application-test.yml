@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: ${APP_NAME_TEST:datapulse-backend-test}
+
+  datasource:
+    url: ${TEST_DB_URL:jdbc:h2:mem:datapulse_test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${TEST_DB_USERNAME:sa}
+    password: ${TEST_DB_PASSWORD:}
+    driver-class-name: ${TEST_DB_DRIVER:org.h2.Driver}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: ${TEST_DDL_AUTO:create-drop}
+    show-sql: ${TEST_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: ${TEST_FORMAT_SQL:true}
+        jdbc:
+          time_zone: ${TEST_TIME_ZONE:UTC}
+        dialect: ${TEST_HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}
+
+  flyway:
+    enabled: ${TEST_FLYWAY_ENABLED:false}
+
+  h2:
+    console:
+      enabled: ${TEST_H2_CONSOLE:false}
+
+  jackson:
+    time-zone: ${TEST_JACKSON_TIME_ZONE:UTC}
+
+logging:
+  level:
+    org.springframework.web: ${TEST_LOG_WEB_LEVEL:WARN}
+    org.hibernate.SQL: ${TEST_LOG_SQL_LEVEL:WARN}
+    org.hibernate.orm.jdbc.bind: ${TEST_LOG_BIND_LEVEL:WARN}
