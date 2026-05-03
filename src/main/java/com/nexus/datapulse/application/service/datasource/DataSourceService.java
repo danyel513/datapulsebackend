@@ -1,7 +1,7 @@
 package com.nexus.datapulse.application.service.datasource;
 
 import com.nexus.datapulse.common.exception.EntityAlreadyExists;
-import com.nexus.datapulse.domain.datasource.model.DataSource;
+import com.nexus.datapulse.domain.datasource.DataSource;
 import com.nexus.datapulse.infrastructure.persistence.entity.DataSourceEntity;
 import com.nexus.datapulse.infrastructure.persistence.mapper.DataSourceMapper;
 import com.nexus.datapulse.infrastructure.persistence.repository.DataSourceRepository;

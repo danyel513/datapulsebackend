@@ -38,8 +38,7 @@ CREATE TABLE data_sources (
 
 CREATE TABLE metric_definitions (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            data_source_id UUID NOT NULL,
-            metric_key VARCHAR(100) NOT NULL,
+            metric_key VARCHAR(100) NOT NULL UNIQUE,
             display_name VARCHAR(150) NOT NULL,
             unit VARCHAR(50) NOT NULL,
             data_type VARCHAR(50) NOT NULL,
@@ -50,13 +49,7 @@ CREATE TABLE metric_definitions (
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             updated_at TIMESTAMPTZ,
             created_by VARCHAR(100),
-            updated_by VARCHAR(100),
-
-            CONSTRAINT fk_metric_definitions_data_source
-                FOREIGN KEY (data_source_id) REFERENCES data_sources(id),
-
-            CONSTRAINT uq_metric_definitions_source_metric
-                UNIQUE (data_source_id, metric_key)
+            updated_by VARCHAR(100)
 );
 
 CREATE TABLE measurement_aggregates (
@@ -104,9 +97,6 @@ CREATE TABLE measurement_aggregates (
 
 CREATE INDEX idx_data_sources_user_id
 ON data_sources(user_id);
-
-CREATE INDEX idx_metric_definitions_data_source_id
-ON metric_definitions(data_source_id);
 
 CREATE INDEX idx_measurement_aggregates_source_metric_window
 ON measurement_aggregates(data_source_id, metric_definition_id, window_start DESC);

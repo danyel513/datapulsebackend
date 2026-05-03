@@ -1,4 +1,4 @@
-package com.nexus.datapulse.domain.datasource.model;
+package com.nexus.datapulse.domain.datasource;
 
 public enum DataSourceStatus {
     ONLINE,

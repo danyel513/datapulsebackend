@@ -1,7 +1,7 @@
 package com.nexus.datapulse.web.mapper;
 
-import com.nexus.datapulse.domain.datasource.model.DataSource;
-import com.nexus.datapulse.domain.datasource.model.DataSourceStatus;
+import com.nexus.datapulse.domain.datasource.DataSource;
+import com.nexus.datapulse.domain.datasource.DataSourceStatus;
 import com.nexus.datapulse.web.dto.datasource.CreateDataSourceRequest;
 import com.nexus.datapulse.web.dto.datasource.DataSourceResponse;
 

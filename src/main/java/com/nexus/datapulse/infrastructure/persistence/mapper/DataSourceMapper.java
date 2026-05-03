@@ -1,6 +1,6 @@
 package com.nexus.datapulse.infrastructure.persistence.mapper;
 
-import com.nexus.datapulse.domain.datasource.model.DataSource;
+import com.nexus.datapulse.domain.datasource.DataSource;
 import com.nexus.datapulse.infrastructure.persistence.entity.DataSourceEntity;
 import com.nexus.datapulse.infrastructure.persistence.entity.UserEntity;
 

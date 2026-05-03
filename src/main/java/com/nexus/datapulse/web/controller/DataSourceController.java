@@ -1,7 +1,7 @@
 package com.nexus.datapulse.web.controller;
 
 import com.nexus.datapulse.application.service.datasource.DataSourceService;
-import com.nexus.datapulse.domain.datasource.model.DataSource;
+import com.nexus.datapulse.domain.datasource.DataSource;
 import com.nexus.datapulse.web.dto.datasource.CreateDataSourceRequest;
 import com.nexus.datapulse.web.dto.datasource.UpdateDataSourceRequest;
 import com.nexus.datapulse.web.dto.datasource.DataSourceResponse;

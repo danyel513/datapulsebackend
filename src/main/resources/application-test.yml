@@ -1,37 +1,51 @@
+server:
+  port: ${SERVER_PORT}
+
 spring:
   application:
-    name: ${APP_NAME_TEST:datapulse-backend-test}
+    name: ${APP_NAME}
 
   datasource:
-    url: ${TEST_DB_URL:jdbc:h2:mem:datapulse_test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
-    username: ${TEST_DB_USERNAME:sa}
-    password: ${TEST_DB_PASSWORD:}
-    driver-class-name: ${TEST_DB_DRIVER:org.h2.Driver}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER}
 
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: ${TEST_DDL_AUTO:create-drop}
-    show-sql: ${TEST_SHOW_SQL:false}
+      ddl-auto: ${DDL_AUTO}
+    show-sql: ${SHOW_SQL}
     properties:
       hibernate:
-        format_sql: ${TEST_FORMAT_SQL:true}
+        format_sql: ${HIBERNATE_FORMAT_SQL}
         jdbc:
-          time_zone: ${TEST_TIME_ZONE:UTC}
-        dialect: ${TEST_HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}
+          time_zone: ${APP_TIME_ZONE}
 
   flyway:
-    enabled: ${TEST_FLYWAY_ENABLED:false}
-
-  h2:
-    console:
-      enabled: ${TEST_H2_CONSOLE:false}
+    enabled: ${FLYWAY_ENABLED}
+    locations: ${FLYWAY_LOCATIONS}
+    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE}
 
   jackson:
-    time-zone: ${TEST_JACKSON_TIME_ZONE:UTC}
+    time-zone: ${JACKSON_TIME_ZONE}
 
 logging:
   level:
-    org.springframework.web: ${TEST_LOG_WEB_LEVEL:WARN}
-    org.hibernate.SQL: ${TEST_LOG_SQL_LEVEL:WARN}
-    org.hibernate.orm.jdbc.bind: ${TEST_LOG_BIND_LEVEL:WARN}
+    org.springframework.web: ${LOG_WEB_LEVEL}
+    org.hibernate.SQL: ${LOG_SQL_LEVEL}
+    org.hibernate.orm.jdbc.bind: ${LOG_BIND_LEVEL}
+
+datapulse:
+  ingestion:
+    socket:
+      host: ${INGESTION_SOCKET_HOST}
+      port: ${INGESTION_SOCKET_PORT}
+      reconnect-delay-ms: ${INGESTION_RECONNECT_DELAY_MS}
+    queue:
+      capacity: ${INGESTION_QUEUE_CAPACITY}
+
+grok:
+  api-key: ${GROK_API_KEY}
+  base-url: ${GROK_BASE_URL}
+  model: ${GROK_MODEL}

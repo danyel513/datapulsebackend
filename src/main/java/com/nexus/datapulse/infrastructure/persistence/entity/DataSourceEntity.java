@@ -1,6 +1,6 @@
 package com.nexus.datapulse.infrastructure.persistence.entity;
 
-import com.nexus.datapulse.domain.datasource.model.DataSourceStatus;
+import com.nexus.datapulse.domain.datasource.DataSourceStatus;
 import com.nexus.datapulse.infrastructure.audit.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -53,9 +53,6 @@ public class DataSourceEntity extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
-
-    @OneToMany(mappedBy = "dataSource", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
-    private List<MetricDefinitionEntity> metricDefinitions = new ArrayList<>();
 
     @OneToMany(mappedBy = "dataSource", fetch = FetchType.LAZY)
     private List<MeasurementAggregateEntity> measurementAggregates = new ArrayList<>();

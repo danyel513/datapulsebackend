@@ -1,4 +1,4 @@
-package com.nexus.datapulse.domain.datasource.model;
+package com.nexus.datapulse.domain.datasource;
 
 import com.nexus.datapulse.common.exception.SourceKeySetException;
 import lombok.AllArgsConstructor;

@@ -1,37 +1,51 @@
-server:
-  port: ${SERVER_PORT:8080}
-
 spring:
   application:
-    name: datapulse-backend
+    name: ${APP_NAME}
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/datapulse}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER}
 
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: ${DDL_AUTO:validate}
-    show-sql: ${SHOW_SQL:true}
+      ddl-auto: ${DDL_AUTO}
+    show-sql: ${SHOW_SQL}
     properties:
       hibernate:
-        format_sql: true
+        format_sql: ${HIBERNATE_FORMAT_SQL}
         jdbc:
-          time_zone: UTC
+          time_zone: ${APP_TIME_ZONE}
 
   flyway:
-    enabled: true
-    locations: classpath:db/migration
-    baseline-on-migrate: true
+    enabled: ${FLYWAY_ENABLED}
+    locations: ${FLYWAY_LOCATIONS}
+    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE}
 
   jackson:
-    time-zone: UTC
+    time-zone: ${JACKSON_TIME_ZONE}
+
+server:
+  port: ${SERVER_PORT}
 
 logging:
   level:
-    org.springframework.web: ${LOG_WEB_LEVEL:INFO}
-    org.hibernate.SQL: ${LOG_SQL_LEVEL:DEBUG}
-    org.hibernate.orm.jdbc.bind: ${LOG_BIND_LEVEL:TRACE}
+    org.springframework.web: ${LOG_WEB_LEVEL}
+    org.hibernate.SQL: ${LOG_SQL_LEVEL}
+    org.hibernate.orm.jdbc.bind: ${LOG_BIND_LEVEL}
+
+datapulse:
+  ingestion:
+    socket:
+      host: ${INGESTION_SOCKET_HOST}
+      port: ${INGESTION_SOCKET_PORT}
+      reconnect-delay-ms: ${INGESTION_RECONNECT_DELAY_MS}
+    queue:
+      capacity: ${INGESTION_QUEUE_CAPACITY}
+
+grok:
+  api-key: ${GROK_API_KEY}
+  base-url: ${GROK_BASE_URL}
+  model: ${GROK_MODEL}

@@ -1,6 +1,6 @@
 package com.nexus.datapulse.web.dto.datasource;
 
-import com.nexus.datapulse.domain.datasource.model.DataSourceStatus;
+import com.nexus.datapulse.domain.datasource.DataSourceStatus;
 
 import java.time.Instant;
 import java.util.UUID;
