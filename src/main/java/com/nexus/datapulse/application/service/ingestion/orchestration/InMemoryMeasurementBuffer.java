@@ -15,11 +15,21 @@ public class InMemoryMeasurementBuffer {
     private final Map<MeasurementWindowKey, List<Measurement>> buffer = new ConcurrentHashMap<>();
 
     public void add(MeasurementWindowKey key, Measurement measurement) {
-        buffer.computeIfAbsent(key, ignored -> java.util.Collections.synchronizedList(new ArrayList<>())).add(measurement);
+        buffer.computeIfAbsent(
+                key,
+                ignored -> java.util.Collections.synchronizedList(new ArrayList<>())
+        ).add(measurement);
     }
 
     public List<Measurement> getMeasurements(MeasurementWindowKey key) {
-        return List.copyOf(buffer.getOrDefault(key, List.of()));
+        List<Measurement> measurements = buffer.get(key);
+        if (measurements == null) {
+            return List.of();
+        }
+
+        synchronized (measurements) {
+            return List.copyOf(measurements);
+        }
     }
 
     public Map<MeasurementWindowKey, List<Measurement>> findExpiredWindows(Instant now) {
@@ -27,7 +37,11 @@ public class InMemoryMeasurementBuffer {
 
         for (Map.Entry<MeasurementWindowKey, List<Measurement>> entry : buffer.entrySet()) {
             if (!entry.getKey().windowEnd().isAfter(now)) {
-                expired.put(entry.getKey(), List.copyOf(entry.getValue()));
+                List<Measurement> measurements = entry.getValue();
+
+                synchronized (measurements) {
+                    expired.put(entry.getKey(), List.copyOf(measurements));
+                }
             }
         }
 

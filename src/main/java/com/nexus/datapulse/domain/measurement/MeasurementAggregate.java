@@ -54,6 +54,12 @@ public record MeasurementAggregate(UUID id, UUID dataSourceId, MetricDefinition 
             throw new IllegalArgumentException("valid + invalid sample count cannot exceed total sample count");
         }
 
+        if (validSampleCount == 0) {
+            if (minValue != null || maxValue != null || avgValue != null || lastValue != null) {
+                throw new IllegalArgumentException("aggregate values must be null when there are no valid samples");
+            }
+        }
+
         if (minValue != null && maxValue != null && minValue > maxValue) {
             throw new IllegalArgumentException("minValue cannot be greater than maxValue");
         }

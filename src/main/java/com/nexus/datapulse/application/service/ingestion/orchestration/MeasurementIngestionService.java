@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 public class MeasurementIngestionService {
 
-    private static final AggregationLevel DEFAULT_AGGREGATION_LEVEL = AggregationLevel.FIVE_SECONDS;
+    private static final AggregationLevel DEFAULT_AGGREGATION_LEVEL = AggregationLevel.ONE_MINUTE;
 
     private final DataSourceService dataSourceService;
     private final MetricDefinitionService metricDefinitionService;
@@ -116,18 +116,22 @@ public class MeasurementIngestionService {
         long epochSeconds = measuredAt.getEpochSecond();
 
         return switch (aggregationLevel) {
-            case FIVE_SECONDS -> Instant.ofEpochSecond((epochSeconds / 5) * 5);
             case ONE_MINUTE -> Instant.ofEpochSecond((epochSeconds / 60) * 60);
+            case TEN_MINUTES -> Instant.ofEpochSecond((epochSeconds / 600) * 600);
+            case THIRTY_MINUTES -> Instant.ofEpochSecond((epochSeconds / 1800) * 1800);
             case ONE_HOUR -> Instant.ofEpochSecond((epochSeconds / 3600) * 3600);
+            case SIX_HOURS -> Instant.ofEpochSecond((epochSeconds / 21600) * 21600);
             case ONE_DAY -> Instant.ofEpochSecond((epochSeconds / 86400) * 86400);
         };
     }
 
     private Instant computeWindowEnd(Instant windowStart, AggregationLevel aggregationLevel) {
         return switch (aggregationLevel) {
-            case FIVE_SECONDS -> windowStart.plusSeconds(5);
             case ONE_MINUTE -> windowStart.plusSeconds(60);
+            case TEN_MINUTES -> windowStart.plusSeconds(600);
+            case THIRTY_MINUTES -> windowStart.plusSeconds(1800);
             case ONE_HOUR -> windowStart.plusSeconds(3600);
+            case SIX_HOURS -> windowStart.plusSeconds(21600);
             case ONE_DAY -> windowStart.plusSeconds(86400);
         };
     }

@@ -88,4 +88,59 @@ public class MeasurementService {
                 )
                 .toList();
     }
+
+    public MeasurementAggregate aggregateFromAggregatesAndSave(
+            UUID dataSourceId,
+            String metricKey,
+            String displayName,
+            String unit,
+            MetricDataType dataType,
+            Double minValidValue,
+            Double maxValidValue,
+            AggregationLevel aggregationLevel,
+            Instant windowStart,
+            Instant windowEnd,
+            List<MeasurementAggregate> aggregates
+    ) {
+        MetricDefinition metricDefinition = metricDefinitionService.getOrCreate(
+                metricKey,
+                displayName,
+                unit,
+                dataType,
+                minValidValue,
+                maxValidValue
+        );
+
+        if (measurementAggregateService.existsByNaturalKey(
+                dataSourceId,
+                metricDefinition.id(),
+                aggregationLevel,
+                windowStart,
+                windowEnd
+        )) {
+            return measurementAggregateService.findLatest(
+                            dataSourceId,
+                            metricDefinition.id(),
+                            aggregationLevel
+                    )
+                    .filter(existing ->
+                            existing.windowStart().equals(windowStart) &&
+                                    existing.windowEnd().equals(windowEnd)
+                    )
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Aggregate already exists, but could not be reloaded"
+                    ));
+        }
+
+        MeasurementAggregate aggregate = aggregationService.aggregateFromAggregates(
+                dataSourceId,
+                metricDefinition,
+                aggregationLevel,
+                windowStart,
+                windowEnd,
+                aggregates
+        );
+
+        return measurementAggregateService.save(aggregate);
+    }
 }

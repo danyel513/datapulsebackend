@@ -1,13 +1,15 @@
 package com.nexus.datapulse.application.service.ingestion.processing;
 
-import tools.jackson.databind.ObjectMapper;
+import com.nexus.datapulse.application.service.ingestion.dto.IncomingIngestionPayload;
 import com.nexus.datapulse.domain.ingestion.NormalizedIngestionEvent;
+import com.nexus.datapulse.domain.ingestion.NormalizedMetricValue;
 import com.nexus.datapulse.domain.ingestion.RawPayloadEnvelope;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
+@Component
 @RequiredArgsConstructor
-@Service
 public class JsonPayloadParser implements PayloadParser {
 
     private final ObjectMapper objectMapper;
@@ -15,14 +17,20 @@ public class JsonPayloadParser implements PayloadParser {
     @Override
     public NormalizedIngestionEvent parse(RawPayloadEnvelope envelope) {
         try {
-            NormalizedIngestionEvent event =
-                    objectMapper.readValue(envelope.payload(), NormalizedIngestionEvent.class);
+            IncomingIngestionPayload incomingPayload =
+                    objectMapper.readValue(envelope.payload(), IncomingIngestionPayload.class);
 
             return new NormalizedIngestionEvent(
-                    event.sourceKey(),
-                    event.measuredAt(),
+                    incomingPayload.sourceKey(),
+                    incomingPayload.measuredAt(),
                     envelope.receivedAt(),
-                    event.metrics()
+                    incomingPayload.metrics().stream()
+                            .map(metric -> new NormalizedMetricValue(
+                                    metric.name(),
+                                    metric.value(),
+                                    metric.unit()
+                            ))
+                            .toList()
             );
         } catch (Exception ex) {
             throw new IllegalArgumentException("Failed to parse payload: " + ex.getMessage(), ex);

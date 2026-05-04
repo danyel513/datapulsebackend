@@ -11,6 +11,7 @@ import com.nexus.datapulse.infrastructure.persistence.repository.MeasurementAggr
 import com.nexus.datapulse.infrastructure.persistence.repository.MetricDefinitionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class MeasurementAggregateService {
 
     private final MeasurementAggregateRepository measurementAggregateRepository;
@@ -44,6 +46,27 @@ public class MeasurementAggregateService {
 
         MeasurementAggregateEntity savedEntity = measurementAggregateRepository.save(entity);
         return MeasurementAggregateMapper.toModel(savedEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MeasurementAggregate> findByWindowAndAggregationLevel(
+            UUID dataSourceId,
+            UUID metricDefinitionId,
+            AggregationLevel aggregationLevel,
+            Instant windowStart,
+            Instant windowEnd
+    ) {
+        return measurementAggregateRepository
+                .findAllByDataSourceIdAndMetricDefinitionIdAndAggregationLevelAndWindowStartGreaterThanEqualAndWindowEndLessThanEqual(
+                        dataSourceId,
+                        metricDefinitionId,
+                        aggregationLevel,
+                        windowStart,
+                        windowEnd
+                )
+                .stream()
+                .map(MeasurementAggregateMapper::toModel)
+                .toList();
     }
 
     public MeasurementAggregate update(MeasurementAggregate model) {
@@ -73,63 +96,70 @@ public class MeasurementAggregateService {
         return MeasurementAggregateMapper.toModel(savedEntity);
     }
 
+    @Transactional(readOnly = true)
     public Optional<MeasurementAggregate> findById(UUID id) {
-        return measurementAggregateRepository.findById(id)
+        return measurementAggregateRepository.findByIdWithRelations(id)
                 .map(MeasurementAggregateMapper::toModel);
     }
 
+    @Transactional(readOnly = true)
     public List<MeasurementAggregate> findByDataSourceId(UUID dataSourceId) {
-        return measurementAggregateRepository.findAllByDataSourceId(dataSourceId)
+        return measurementAggregateRepository.findAllByDataSourceIdWithRelations(dataSourceId)
                 .stream()
                 .map(MeasurementAggregateMapper::toModel)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<MeasurementAggregate> findByMetricDefinitionId(UUID metricDefinitionId) {
-        return measurementAggregateRepository.findAllByMetricDefinitionId(metricDefinitionId)
+        return measurementAggregateRepository.findAllByMetricDefinitionIdWithMetric(metricDefinitionId)
                 .stream()
                 .map(MeasurementAggregateMapper::toModel)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<MeasurementAggregate> findByDataSourceIdAndMetricDefinitionId(
             UUID dataSourceId,
             UUID metricDefinitionId
     ) {
         return measurementAggregateRepository
-                .findAllByDataSourceIdAndMetricDefinitionId(dataSourceId, metricDefinitionId)
+                .findAllByDataSourceIdAndMetricDefinitionIdWithRelations(dataSourceId, metricDefinitionId)
                 .stream()
                 .map(MeasurementAggregateMapper::toModel)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<MeasurementAggregate> findByDataSourceIdAndAggregationLevel(
             UUID dataSourceId,
             AggregationLevel aggregationLevel
     ) {
         return measurementAggregateRepository
-                .findAllByDataSourceIdAndAggregationLevel(dataSourceId, String.valueOf(aggregationLevel))
+                .findAllByDataSourceIdAndAggregationLevelWithRelations(dataSourceId, aggregationLevel)
                 .stream()
                 .map(MeasurementAggregateMapper::toModel)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<MeasurementAggregate> findByDataSourceIdAndMetricDefinitionIdAndAggregationLevel(
             UUID dataSourceId,
             UUID metricDefinitionId,
             AggregationLevel aggregationLevel
     ) {
         return measurementAggregateRepository
-                .findAllByDataSourceIdAndMetricDefinitionIdAndAggregationLevel(
+                .findAllByDataSourceIdAndMetricDefinitionIdAndAggregationLevelWithRelations(
                         dataSourceId,
                         metricDefinitionId,
-                        String.valueOf(aggregationLevel)
+                        aggregationLevel
                 )
                 .stream()
                 .map(MeasurementAggregateMapper::toModel)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<MeasurementAggregate> findByWindow(
             UUID dataSourceId,
             UUID metricDefinitionId,
@@ -137,7 +167,7 @@ public class MeasurementAggregateService {
             Instant windowEnd
     ) {
         return measurementAggregateRepository
-                .findAllByDataSourceIdAndMetricDefinitionIdAndWindowStartGreaterThanEqualAndWindowEndLessThanEqual(
+                .findAllByDataSourceIdAndMetricDefinitionIdAndWindowStartGreaterThanEqualAndWindowEndLessThanEqualWithRelations(
                         dataSourceId,
                         metricDefinitionId,
                         windowStart,
@@ -148,6 +178,7 @@ public class MeasurementAggregateService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public Optional<MeasurementAggregate> findLatest(
             UUID dataSourceId,
             UUID metricDefinitionId,
@@ -157,11 +188,12 @@ public class MeasurementAggregateService {
                 .findTopByDataSourceIdAndMetricDefinitionIdAndAggregationLevelOrderByWindowEndDesc(
                         dataSourceId,
                         metricDefinitionId,
-                        String.valueOf(aggregationLevel)
+                        aggregationLevel
                 )
                 .map(MeasurementAggregateMapper::toModel);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByNaturalKey(
             UUID dataSourceId,
             UUID metricDefinitionId,
@@ -173,7 +205,7 @@ public class MeasurementAggregateService {
                 .existsByDataSourceIdAndMetricDefinitionIdAndAggregationLevelAndWindowStartAndWindowEnd(
                         dataSourceId,
                         metricDefinitionId,
-                        String.valueOf(aggregationLevel),
+                        aggregationLevel,
                         windowStart,
                         windowEnd
                 );
